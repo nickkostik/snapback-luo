@@ -1,0 +1,955 @@
+/* === Reset and Base Styles === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px; /* Base font size */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #f9f9f9; /* Slightly off-white background */
+    color: #1c1c1e; /* Near black for primary text */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.55; /* Improved readability */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* === Typography === */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #1c1c1e;
+    margin-bottom: 0.75em; /* Consistent spacing below headings */
+}
+
+h1 { font-size: 1.8rem; line-height: 1.3; }
+h2 { font-size: 1.4rem; line-height: 1.35; } /* Slightly smaller card titles */
+h3 { font-size: 1.1rem; line-height: 1.4; }
+p { margin-bottom: 1em; color: #333333; } /* Default paragraph color */
+
+a {
+    color: #007aff; /* Apple blue links */
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+a:hover {
+    color: #0056b3; /* Darker blue on hover */
+}
+
+/* === Layout === */
+header {
+    background-color: #ffffff;
+    color: #1c1c1e;
+    padding: 1rem 2rem; /* Slightly reduced padding */
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.header-logo {
+    display: block;
+    margin: 0 auto 0.5rem auto;
+    max-height: 50px; /* Slightly smaller logo */
+    width: auto;
+}
+
+header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.1rem;
+}
+
+header p {
+    font-size: 0.9rem;
+    color: #636366; /* Medium gray subtitle */
+    margin-bottom: 0.75rem;
+}
+
+nav {
+    margin-top: 0.5rem;
+}
+nav a {
+    margin: 0 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 6px 4px; /* Add padding for easier clicking */
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+nav a.active {
+    color: #007aff;
+    border-bottom-color: #007aff;
+}
+nav a:hover:not(.active) {
+    color: #0056b3;
+}
+
+
+main {
+    flex-grow: 1;
+    max-width: 850px; /* Wider for more complex layouts */
+    width: 95%;
+    margin: 25px auto; /* Reduced vertical margin */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Consistent gap between cards */
+}
+
+footer {
+    background-color: #f9f9f9;
+    color: #8e8e93; /* Lighter gray footer text */
+    text-align: center;
+    padding: 1.25rem 1rem;
+    font-size: 0.8rem;
+    border-top: 1px solid #e0e0e0;
+    margin-top: auto;
+}
+
+/* === Card Style === */
+.card {
+    background-color: #ffffff;
+    border-radius: 12px; /* More rounded corners */
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04); /* Slightly more defined shadow */
+    padding: 20px 25px;
+    overflow: hidden; /* Ensure content respects border-radius */
+}
+.card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e5e7; /* Lighter separator */
+}
+.card p {
+    font-size: 0.95rem;
+    color: #636366;
+    line-height: 1.6;
+}
+
+/* === Buttons === */
+.button-style, .button-style-link, .button-style-upload {
+    display: inline-block;
+    padding: 9px 18px; /* Adjusted padding */
+    border: none;
+    border-radius: 8px; /* Consistent rounded corners */
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+    text-align: center;
+    user-select: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.button-style:active, .button-style-link:active, .button-style-upload:active {
+     transform: scale(0.97);
+     box-shadow: none;
+}
+.button-style:focus, .button-style-link:focus, .button-style-upload:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3); /* Focus ring */
+}
+
+/* Primary Button (Default) */
+.button-style {
+    background-color: #007aff; /* Apple Blue */
+    color: #ffffff;
+}
+.button-style:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+/* Link styled as button */
+.button-style-link {
+    background-color: #007aff;
+    color: #ffffff;
+}
+.button-style-link:hover {
+    background-color: #0056b3;
+    color: #ffffff; /* Ensure text remains white */
+}
+
+/* Secondary Button */
+.button-style.secondary {
+    background-color: #e5e5e7; /* Light gray */
+    color: #1c1c1e;
+    border: 1px solid #d1d1d6; /* Subtle border */
+    box-shadow: none;
+}
+.button-style.secondary:hover {
+    background-color: #d1d1d6; /* Slightly darker gray */
+}
+.button-style.secondary:focus {
+     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2); /* Lighter focus ring */
+}
+
+/* Upload Button (Label styled) */
+.button-style-upload {
+    background-color: #34c759; /* Apple Green */
+    color: #ffffff;
+}
+.button-style-upload:hover {
+    background-color: #2aa14a; /* Darker Green */
+}
+
+/* Icon Button (e.g., attach, remove) */
+.icon-button {
+    background: none;
+    border: none;
+    font-size: 1.6rem; /* Larger icons */
+    color: #8e8e93; /* Medium gray */
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    flex-shrink: 0;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon-button:hover {
+    color: #007aff; /* Blue on hover */
+    background-color: rgba(0, 122, 255, 0.1); /* Subtle background */
+}
+.icon-button:active {
+    transform: scale(0.9);
+}
+.icon-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3); /* Focus ring */
+}
+
+/* === Forms & Inputs === */
+input[type="text"],
+input[type="password"],
+input[type="search"],
+textarea {
+    width: 100%;
+    padding: 10px 14px; /* Consistent padding */
+    border: 1px solid #d1d1d6; /* Softer border */
+    border-radius: 8px; /* Consistent radius */
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: #ffffff;
+    color: #1c1c1e;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2); /* Focus glow */
+}
+textarea {
+    min-height: 100px;
+    line-height: 1.5;
+    resize: vertical; /* Allow vertical resize */
+}
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333333;
+}
+.sr-only { /* Screen reader only */
+	position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+	overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+}
+
+/* Confirmation Messages */
+.confirmation-message {
+    font-size: 0.9rem;
+    color: #34c759; /* Apple green for success */
+    height: 1.5em;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    font-weight: 500;
+    display: inline-block; /* Allow placement next to buttons */
+    margin-left: 10px;
+}
+.warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin: 15px 0;
+}
+.warning strong {
+    font-weight: 600;
+}
+
+/* === iMessage Chat Interface Specific Styles (`index.html`) === */
+
+/* Chatbox Container */
+#chatbox {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #ffffff; /* White chat background */
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Reduced gap for tighter message packing */
+    border: none;
+    /* Remove card padding if chatbox is direct child */
+    margin: -20px -25px 0 -25px; /* Expand to fill card padding */
+    padding: 15px; /* Re-apply padding inside */
+    border-bottom: 1px solid #e0e0e0; /* Separator above input */
+}
+
+/* Message Bubbles */
+.message {
+    max-width: 75%;
+    padding: 9px 14px; /* Slightly adjusted padding */
+    border-radius: 18px; /* iMessage bubble radius */
+    line-height: 1.45;
+    word-wrap: break-word;
+    position: relative;
+    font-size: 1.0rem; /* Standard chat font size */
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+}
+.message span { /* Ensure span doesn't break layout */
+    display: inline;
+    word-wrap: break-word; /* Allow long words to break */
+    white-space: pre-wrap; /* Respect whitespace and newlines */
+}
+
+/* User Message Bubble */
+.message.user {
+    background-color: #007aff;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px; /* Tail effect */
+    margin-left: auto; /* Push to right */
+}
+/* Add tail using pseudo-element (optional, can be complex) */
+/* .message.user::after { ... } */
+
+/* AI Message Bubble */
+.message.ai {
+    background-color: #e5e5e7; /* iMessage light gray */
+    color: #1c1c1e; /* Black text */
+    align-self: flex-start;
+    border-bottom-left-radius: 4px; /* Tail effect */
+    margin-right: auto; /* Push to left */
+}
+/* Add tail using pseudo-element (optional) */
+/* .message.ai::after { ... } */
+
+/* Typing Indicator */
+.message.typing {
+    color: #8e8e93;
+    font-style: italic;
+    align-self: flex-start;
+    background: none;
+    box-shadow: none;
+    padding: 5px 15px;
+    font-size: 0.9rem;
+}
+/* Add animated dots (optional) */
+/* .message.typing::after { content: '...'; animation: typing-dots 1s infinite; } */
+
+/* Error Message */
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    align-self: stretch; /* Full width */
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    max-width: 100%;
+    margin: 5px 0;
+    box-shadow: none;
+}
+
+/* Input Area */
+#input-area {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px; /* Reduced padding */
+    background-color: #ffffff; /* Match card background */
+    gap: 8px;
+    /* Remove card padding if input area is direct child */
+    margin: 0 -25px -20px -25px; /* Expand to fill card padding */
+    padding: 10px 15px; /* Re-apply padding inside */
+}
+
+#userInput {
+    flex-grow: 1;
+    padding: 9px 18px; /* Match button vertical padding */
+    border: 1px solid #d1d1d6;
+    border-radius: 18px; /* Pill shape */
+    font-size: 1rem;
+    background-color: #f9f9f9; /* Slight contrast */
+    resize: none;
+    outline: none;
+    min-height: 38px; /* Ensure minimum height */
+}
+#userInput:focus {
+     background-color: #ffffff;
+     border-color: #007aff;
+     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); /* Softer focus */
+}
+
+/* Send Button */
+#sendButton {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%; /* Circle */
+    font-size: 1.1rem; /* Icon size */
+    font-weight: 500;
+    line-height: 1;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0; /* Remove padding */
+    box-shadow: none;
+}
+#sendButton:hover {
+    background-color: #0056b3;
+}
+#sendButton:active {
+    transform: scale(0.9);
+}
+#sendButton::before { /* Simple arrow icon */
+    content: '↑';
+    font-weight: bold;
+    margin-top: -1px; /* Adjust alignment */
+}
+#sendButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3); /* Focus ring */
+}
+
+
+/* File Preview Area */
+.file-preview {
+    display: none; /* Hidden by default, shown by JS */
+    padding: 6px 12px;
+    margin: -5px 15px 10px 58px; /* Position relative to input area */
+    background-color: #e5e5e7;
+    border-radius: 12px; /* Rounded */
+    font-size: 0.85rem;
+    color: #333;
+    display: flex; /* Changed back to flex */
+    justify-content: space-between;
+    align-items: center;
+    max-width: calc(100% - 75px); /* Limit width */
+}
+.file-preview span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+.remove-file-btn {
+    background: none;
+    border: none;
+    color: #8e8e93; /* Gray remove icon */
+    cursor: pointer;
+    font-size: 1.1rem; /* Slightly larger */
+    padding: 0 2px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+.remove-file-btn:hover {
+    color: #ff3b30; /* Red on hover */
+    opacity: 1;
+}
+
+/* File Mention in Chat */
+.file-mention {
+    font-style: italic;
+    font-size: 0.85em;
+    color: #636366;
+    margin-left: 5px;
+    display: block; /* Put on new line */
+    margin-top: 3px;
+}
+
+/* === Memory Toggles (Shared Style) === */
+.memory-options {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Increased gap for better spacing */
+}
+
+/* Container for the entire toggle switch component */
+.toggle-switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 0;
+    cursor: pointer;
+}
+
+/* Wrapper for the toggle switch and its label */
+.toggle-switch-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+/* The toggle switch itself */
+.toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-right: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-switch input { 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .3s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider { 
+    background-color: #34c759; 
+}
+
+input:focus + .slider { 
+    box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.3); 
+}
+
+input:checked + .slider:before { 
+    transform: translateX(20px); 
+}
+
+.slider.round { 
+    border-radius: 24px; 
+}
+
+.slider.round:before { 
+    border-radius: 50%; 
+}
+
+/* Toggle label styling */
+.toggle-label {
+    font-size: 0.95rem;
+    color: #333333;
+}
+
+/* Tooltip container */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    margin-left: 8px;
+}
+
+/* Tooltip icon */
+.tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: #e5e5e7;
+    color: #636366;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: help;
+}
+
+/* Tooltip text */
+.tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.85rem;
+    font-weight: normal;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Arrow for tooltip */
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* Show tooltip on hover */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.current-memory-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e5e7;
+}
+
+.current-memory-section strong {
+    font-weight: 600;
+    color: #1c1c1e;
+    font-size: 0.9rem;
+}
+
+#currentMemoryList {
+    font-size: 0.85em;
+    color: #636366;
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+#currentMemoryList li {
+    margin-bottom: 5px;
+}
+
+/* === Memory Log Styles === */
+.memory-log h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.memory-log-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.memory-log-input input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.memory-feedback {
+    height: 24px;
+    font-size: 0.9rem;
+    color: #34c759;
+    margin-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.memory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e5e5e7;
+    border-radius: 8px;
+}
+
+.memory-list li {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e5e7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.memory-list li:last-child {
+    border-bottom: none;
+}
+
+.memory-list .memory-content {
+    flex: 1;
+}
+
+.memory-list .memory-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.memory-list .edit-btn,
+.memory-list .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    color: #8e8e93;
+    opacity: 0.7;
+    transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.memory-list .edit-btn:hover {
+    color: #007aff;
+    opacity: 1;
+}
+
+.memory-list .delete-btn:hover {
+    color: #ff3b30;
+    opacity: 1;
+}
+
+.memory-empty-state {
+    color: #8e8e93;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Animation for memory feedback */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.memory-feedback.show {
+    opacity: 1;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+/* === Training Page Specific Styles (`training.html`) === */
+
+/* Smart Suggestions */
+.smart-suggestions {
+    font-size: 0.85rem;
+    color: #007aff;
+    margin-top: 8px;
+    min-height: 1.2em;
+    padding-left: 5px;
+}
+
+/* Behavior Categories Panel */
+.behavior-categories-panel .tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e5e7;
+    margin-bottom: 15px;
+    overflow-x: auto; /* Allow scrolling on small screens */
+}
+.tab-button {
+    padding: 10px 16px; /* More padding */
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    font-size: 0.95rem;
+    color: #636366;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    white-space: nowrap; /* Prevent wrapping */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+.tab-button:hover { color: #1c1c1e; }
+.tab-button.active {
+    color: #007aff;
+    border-bottom-color: #007aff;
+    font-weight: 500;
+}
+
+.tags-area {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 15px;
+}
+.tag {
+    background-color: #e5e5e7; /* Match AI bubble */
+    color: #1c1c1e;
+    padding: 5px 12px; /* Adjusted padding */
+    border-radius: 14px; /* Pill shape */
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-flex; align-items: center; cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+.tag:hover { background-color: #d1d1d6; }
+.remove-tag-btn {
+    background: none; border: none; color: #8e8e93; margin-left: 6px;
+    cursor: pointer; font-size: 1rem; padding: 0; line-height: 1;
+    transition: color 0.2s ease-in-out;
+}
+.remove-tag-btn:hover { color: #ff3b30; }
+#newTagInput {
+    border: 1px solid #d1d1d6; border-radius: 6px; padding: 5px 8px;
+    font-size: 0.9em; margin-left: 10px;
+}
+
+/* Voice/Personality Sections */
+#voiceUploadPreview, #personalityUploadPreview {
+    margin-top: 10px; font-size: 0.9em; color: #636366;
+}
+#styleGuideOutput {
+    margin-top: 15px; font-family: "SF Mono", Monaco, Consolas, "Courier New", monospace;
+    font-size: 0.85em; white-space: pre-wrap; background: #f0f0f0;
+    padding: 12px 15px; border-radius: 8px; border: 1px solid #e5e5e7;
+    max-height: 200px; overflow-y: auto;
+}
+
+/* Data Table */
+.data-table {
+    width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem;
+    border: 1px solid #e5e5e7; border-radius: 8px; overflow: hidden; /* Clip corners */
+}
+.data-table th, .data-table td {
+    padding: 10px 14px; /* Consistent padding */
+    text-align: left; vertical-align: middle; /* Align middle */
+    border-bottom: 1px solid #e5e5e7;
+}
+.data-table th {
+    background-color: #f9f9f9; /* Match body background */
+    font-weight: 500; /* Lighter header weight */
+    font-size: 0.85rem;
+    color: #636366;
+    text-transform: uppercase; /* Uppercase headers */
+    letter-spacing: 0.5px;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background-color: rgba(0, 122, 255, 0.03); } /* Subtle hover */
+.data-table td[colspan="5"] { text-align: center; color: #8e8e93; font-style: italic; }
+.data-table .actions-cell button {
+    background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 2px 5px;
+    color: #8e8e93; opacity: 0.8; transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+.data-table .actions-cell button:hover { opacity: 1; }
+.data-table .actions-cell button.edit:hover { color: #007aff; }
+.data-table .actions-cell button.delete:hover { color: #ff3b30; }
+
+/* Knowledge Base */
+.knowledge-base-section input[type="search"] {
+     border: 1px solid #d1d1d6; border-radius: 8px; padding: 8px 12px;
+     font-size: 0.95rem; width: 280px;
+}
+#knowledgeCardsContainer {
+    margin-top: 20px; display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px;
+}
+.knowledge-card-placeholder {
+    color: #8e8e93; font-style: italic; text-align: center; padding: 30px;
+    grid-column: 1 / -1; background-color: #f9f9f9; border-radius: 8px;
+}
+.knowledge-card { /* Example style */
+    border: 1px solid #e5e5e7; border-radius: 8px; padding: 15px;
+    background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s ease-in-out;
+}
+.knowledge-card:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.06); }
+.knowledge-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+.knowledge-card p { font-size: 0.9rem; color: #636366; margin-bottom: 10px; }
+.knowledge-card .tags { font-size: 0.8rem; color: #8e8e93; }
+
+/* Instructions List */
+.instructions-list {
+    list-style: none; padding: 0; margin: 0; border: 1px solid #e5e5e7;
+    border-radius: 8px; background-color: #ffffff; max-height: 350px; overflow-y: auto;
+}
+.instructions-list li {
+    padding: 10px 15px; border-bottom: 1px solid #e5e5e7; display: flex;
+    justify-content: space-between; align-items: center; font-size: 0.95rem; color: #1c1c1e;
+}
+.instructions-list li:last-child { border-bottom: none; }
+.delete-instruction-btn {
+    background: none; border: none; color: #8e8e93; cursor: pointer; font-size: 1.2rem;
+    padding: 2px 5px; margin-left: 10px; line-height: 1; opacity: 0.7;
+    transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+.delete-instruction-btn:hover { color: #ff3b30; opacity: 1; }
+
+/* === API Key Page Specific Styles (`api_key_setup.html`) === */
+#apiKeyInput {
+    font-family: "SF Mono", Monaco, Consolas, "Courier New", monospace; /* Monospace for key */
+    margin-bottom: 15px;
+}
+.api-key-form-section label {
+    font-size: 1rem; /* Slightly larger label */
+}
+
+/* === Responsive Adjustments (Example) === */
+@media (max-width: 768px) {
+    html { font-size: 15px; }
+    header { padding: 1rem 1.5rem; }
+    main { width: 98%; margin: 20px auto; gap: 20px; }
+    .card { padding: 15px 20px; }
+    .card h2 { font-size: 1.2rem; }
+    #chatbox { padding: 10px; margin: -15px -20px 0 -20px; }
+    #input-area { padding: 8px 10px; margin: 0 -20px -15px -20px; }
+    .message { max-width: 85%; }
+    .tab-button { padding: 8px 12px; font-size: 0.9rem; }
+    .data-table { font-size: 0.85rem; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+}
+
+@media (max-width: 480px) {
+    html { font-size: 14px; }
+    header { padding: 0.8rem 1rem; }
+    header h1 { font-size: 1.4rem; }
+    header p { font-size: 0.85rem; }
+    nav a { margin: 0 8px; font-size: 0.9rem; padding: 4px 2px; }
+    main { margin: 15px auto; gap: 15px; }
+    .card { padding: 12px 15px; border-radius: 10px; }
+    .button-style, .button-style-link, .button-style-upload { padding: 8px 15px; font-size: 0.9rem; }
+    #chatbox { gap: 3px; }
+    .message { max-width: 90%; font-size: 0.95rem; padding: 8px 12px; border-radius: 16px; }
+    #userInput { padding: 8px 15px; min-height: 36px; font-size: 0.95rem; }
+    #sendButton, .icon-button { width: 34px; height: 34px; font-size: 1.4rem; }
+    .file-preview { margin-left: 50px; max-width: calc(100% - 65px); }
+    .knowledge-base-section input[type="search"] { width: 100%; margin-left: 0; margin-top: 10px; }
+}
+

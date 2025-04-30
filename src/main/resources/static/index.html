@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapback Luo - Chat with Luis Garcia</title>
+    <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <header>
+        <img src="luis.png" alt="Snapback Luo Logo" class="header-logo"> <!-- Added Logo -->
+        <h1>Snapback Luo</h1>
+        <p>Chat with the Luis Garcia AI</p>
+        <nav>
+            <a href="/" class="active">Chat</a>
+            <a href="/training">Train Behavior</a>
+            <a href="/api_key">API Key</a> <!-- Added API Key link back -->
+        </nav>
+    </header>
+
+    <main>
+        <!-- Chat Interface Card -->
+        <div class="card">
+             <!-- No H2 needed for the main chat card -->
+            <div id="chatbox">
+                <div class="message ai"><span>Hello! I'm Luis Garcia, or Luo as some call me. What's up?</span></div>
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <div id="input-area">
+                <button id="attachFileButton" class="icon-button" title="Attach File">📎</button> <!-- Attach File Button -->
+                <input type="file" id="fileInput" accept=".txt,.pdf,.png,.jpg,.jpeg,.gif,.mp3,.wav" style="display: none;"> <!-- Updated File Input accepts -->
+                <input type="text" id="userInput" placeholder="Ask Luis something...">
+                <button id="sendButton" title="Send Message"></button> <!-- Removed text, icon added via CSS -->
+            </div>
+            <div id="filePreviewArea" class="file-preview"></div> <!-- Area to show selected file name -->
+        </div>
+    </main>
+
+    <footer>
+        <p>© Snapback Luo - AI Persona Demo</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

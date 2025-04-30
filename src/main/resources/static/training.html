@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapback Luo - Train Luis Garcia</title>
+    <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <header>
+        <img src="luis.png" alt="Snapback Luo Logo" class="header-logo"> <!-- Added Logo -->
+        <h1>Snapback Luo</h1>
+        <p>Define Luis Garcia's Behavior</p>
+        <nav>
+            <a href="/">Chat</a>
+            <a href="/training" class="active">Train Behavior</a>
+            <a href="/api_key">API Key</a>
+        </nav>
+    </header>
+
+    <main> <!-- Removed training-main class -->
+
+        <!-- 1. Add Custom Instruction -->
+        <div class="card">
+            <h2>Add Custom Instruction</h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Enter specific instructions to customize Luis's behavior. Use the categories panel to tag them. Press Enter to save.</p>
+            <div class="training-input-section">
+                <label for="trainingInstruction" class="sr-only">Custom Instruction:</label>
+                <input type="text" id="trainingInstruction" placeholder="e.g., 'Talk about your love for pizza whenever food is mentioned.'">
+                 <!-- Smart Instruction Generator Placeholder -->
+                <div id="smartSuggestions" class="smart-suggestions" style="font-size: 0.85rem; color: #007aff; margin-top: 5px; min-height: 1.2em;">
+                    <!-- Suggestions like "Try format: User: [input] Luis: [output]" will appear here -->
+                </div>
+                <div id="confirmationMessage" class="confirmation-message" aria-live="polite"></div>
+                <!-- Add button might be needed if Enter isn't the only way -->
+                <!-- <button id="addInstructionBtn" class="button-style">Add Instruction</button> -->
+            </div>
+        </div>
+
+        <!-- 2. Memory Log Card -->
+        <div class="card memory-log">
+            <h2>📘 Memory Log</h2>
+            <div class="memory-log-input">
+                <input type="text" id="memoryInput" placeholder="Log something Luis should remember..." />
+                <button id="addMemoryBtn" class="button-style">Add Memory</button>
+            </div>
+            <div id="memoryFeedback" class="memory-feedback"></div>
+            <ul id="memoryList" class="memory-list">
+                <!-- Memory entries will appear here -->
+                <li class="memory-empty-state">(No memories logged yet)</li>
+            </ul>
+        </div>
+
+        <!-- 3. Current Behavior Profile Card -->
+        <div class="card">
+             <h2>Custom Behavior Instructions</h2>
+             <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">List of your custom instructions. Click the 'x' to remove an instruction.</p>
+             <div style="font-size: 0.9rem; color: #007aff; margin-bottom: 15px;">
+                 <strong>Note:</strong> Luis has a set of core personality traits that are always active in addition to your custom instructions.
+             </div>
+             <ul id="savedInstructionsList" class="instructions-list">
+                 <!-- Instructions will be loaded here by training_script.js -->
+                 <li>Example Instruction <button class="delete-instruction-btn">×</button></li>
+             </ul>
+             <button id="exportFinetuneBtn" class="button-style" style="margin-top: 20px;">Export for Fine-tuning (JSONL)</button>
+        </div>
+
+        <!-- 4. Behavior Categories Panel Card -->
+        <div class="card">
+            <h2>Categorize Custom Instruction</h2>
+            <div class="behavior-categories-panel">
+                <div class="tabs">
+                    <button class="tab-button active" data-category="personality">Personality</button>
+                    <button class="tab-button" data-category="memory">Memory</button>
+                    <button class="tab-button" data-category="relationships">Relationships</button>
+                    <button class="tab-button" data-category="contextual">Contextual Reactions</button>
+                </div>
+                <div class="tags-area" style="margin-top: 15px;">
+                    <span class="tag" data-tag-value="Sarcastic">Sarcastic <button class="remove-tag-btn">x</button></span>
+                    <span class="tag" data-tag-value="Friendly">Friendly <button class="remove-tag-btn">x</button></span>
+                    <span class="tag" data-tag-value="Insult">Insult <button class="remove-tag-btn">x</button></span>
+                    <!-- More tags can be added dynamically or pre-defined per category -->
+                    <input type="text" id="newTagInput" placeholder="Add new tag..." style="margin-left: 10px; font-size: 0.9em; padding: 3px 5px;">
+                </div>
+                <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">Select or add tags for the custom instruction entered above. Multiple tags allowed.</p>
+            </div>
+        </div>
+
+        <!-- 5. Guided Roleplay Setup Card -->
+        <div class="card">
+            <h2>Guided Roleplay Setup</h2>
+            <div class="form-wizard-section">
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Use a step-by-step wizard to define specific reactions and details about Luis.</p>
+                <button id="startWizardBtn" class="button-style">Start Form Wizard</button>
+            </div>
+        </div>
+
+        <!-- 6. Upload and Extract Personality Data Card -->
+        <div class="card">
+            <h2>Extract Personality Data</h2>
+            <div class="personality-extraction-section">
+                <label for="personalityUpload" class="button-style-upload">Upload PDF/Screenshots/Text</label>
+                <input type="file" id="personalityUpload" accept=".pdf,.png,.jpg,.jpeg,.txt" multiple style="display: none;">
+                <div id="personalityUploadPreview" style="margin-top: 10px; font-size: 0.9em;"></div>
+                <button id="extractPersonalityBtn" class="button-style" style="margin-top: 10px;">Extract Data</button>
+                <div id="extractedDataOutput" style="margin-top: 15px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Keyword/Phrase</th><th>Tone</th><th>Topic</th><th>Emotional Marker</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5">(No data extracted yet)</td></tr>
+                            <!-- Extracted data rows will appear here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. API Key Configuration Card -->
+       <div class="card">
+            <h2>API Key Configuration</h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Configure the Google AI API Key used for chat and analysis features.</p>
+            <a href="/api_key" class="button-style-link">Configure API Key</a>
+       </div>
+
+   </main>
+
+    <footer>
+        <p>© Snapback Luo - AI Persona Demo</p>
+    </footer>
+
+    <script src="training_script.js"></script>
+</body>
+</html>

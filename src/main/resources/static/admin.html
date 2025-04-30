@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapback Luo - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        /* Admin-specific styles */
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .panel {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fff;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .instruction-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .instruction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .instruction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .instruction-text {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        
+        .instruction-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .instruction-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .instruction-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .hidden-badge {
+            background-color: #ff9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+        
+        .visible-badge {
+            background-color: #4caf50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .login-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .login-form button {
+            padding: 10px;
+            background-color: #007aff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+        
+        .error-message {
+            color: #ff3b30;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="luis.png" alt="Snapback Luo Logo" class="header-logo">
+        <h1>Snapback Luo</h1>
+        <p>Admin Panel</p>
+        <nav>
+            <a href="/">Chat</a>
+            <a href="/training">Train Behavior</a>
+            <a href="/api_key">API Key</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Login message (authentication will be handled by the browser) -->
+        <div id="loginContainer" class="login-container">
+            <h2>Admin Authentication</h2>
+            <p>This page requires authentication. If prompted, please enter your admin credentials.</p>
+            <p>If you're not seeing a login prompt, click the button below:</p>
+            <button id="triggerAuthBtn" class="button-style">Login</button>
+            <div id="loginError" class="error-message"></div>
+        </div>
+
+        <!-- Admin Panels (hidden by default, shown after successful login) -->
+        <div id="adminContainer" class="admin-container" style="display: none;">
+            <!-- System Instructions Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>System Instructions (Hidden)</h2>
+                    <div>
+                        <button id="refreshSystemBtn" class="button-style">Refresh</button>
+                    </div>
+                </div>
+                <p>These instructions are used by the AI but are not visible to users on the training page.</p>
+                
+                <div id="systemInstructionsList" class="instruction-list">
+                    <!-- System instructions will be loaded here -->
+                    <div class="instruction-item">
+                        <span class="hidden-badge">Hidden</span>
+                        <span class="instruction-text">Loading system instructions...</span>
+                    </div>
+                </div>
+                
+                <form id="addSystemInstructionForm" class="instruction-form">
+                    <input type="text" id="systemInstructionInput" class="instruction-input" placeholder="Add new system instruction...">
+                    <button type="submit" class="button-style">Add</button>
+                </form>
+            </div>
+            
+            <!-- User-Visible Instructions Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>User-Visible Instructions</h2>
+                    <div>
+                        <button id="refreshVisibleBtn" class="button-style">Refresh</button>
+                    </div>
+                </div>
+                <p>These instructions are visible to users on the training page and are used by the AI.</p>
+                
+                <div id="visibleInstructionsList" class="instruction-list">
+                    <!-- Visible instructions will be loaded here -->
+                    <div class="instruction-item">
+                        <span class="visible-badge">Visible</span>
+                        <span class="instruction-text">Loading visible instructions...</span>
+                    </div>
+                </div>
+                
+                <form id="addVisibleInstructionForm" class="instruction-form">
+                    <input type="text" id="visibleInstructionInput" class="instruction-input" placeholder="Add new visible instruction...">
+                    <button type="submit" class="button-style">Add</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Snapback Luo - AI Persona Demo</p>
+    </footer>
+
+    <script src="admin_script.js"></script>
+</body>
+</html>

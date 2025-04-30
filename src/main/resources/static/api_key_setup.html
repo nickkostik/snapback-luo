@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapback Luo - API Key Setup</title>
+    <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <header>
+        <img src="luis.png" alt="Snapback Luo Logo" class="header-logo"> <!-- Added Logo -->
+        <h1>Snapback Luo</h1>
+        <p>Configure API Key (Demo)</p>
+        <!-- Minimal nav or remove if not needed on this page -->
+        <nav>
+            <a href="/">Chat</a> |
+            <a href="/training">Train Behavior</a>
+            <a href="/api_key" class="active">API Key</a>
+        </nav>
+    </header>
+
+    <main> <!-- Removed api-key-main class -->
+        <div class="card"> <!-- Wrap content in a card -->
+            <h2>Configure Google AI API Key</h2>
+
+            <div class="api-key-form-section" style="margin-top: 15px;"> <!-- Add some top margin -->
+                <label for="apiKeyInput" style="display: block; margin-bottom: 8px; font-weight: 500;">API Key:</label>
+                <input type="text" id="apiKeyInput" placeholder="Paste your key here for this session" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d1d1; border-radius: 6px; font-size: 1rem; margin-bottom: 15px;">
+
+                <button id="saveApiKeyButton" class="button-style">Save Key for Session</button> <!-- Apply button style -->
+                <div id="saveConfirmation" class="confirmation-message" aria-live="polite" style="margin-top: 10px; display: inline-block; margin-left: 15px;"></div> <!-- Confirmation message area -->
+            </div>
+            <!-- Removed the separate navigation link div -->
+        </div>
+    </main>
+
+    <footer>
+        <p>© Snapback Luo - AI Persona Demo</p>
+    </footer>
+
+    <script src="api_key_script.js"></script> <!-- We'll create this script next -->
+</body>
+</html>
