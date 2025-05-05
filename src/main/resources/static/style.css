@@ -953,3 +953,13 @@ input:checked + .slider:before {
     .knowledge-base-section input[type="search"] { width: 100%; margin-left: 0; margin-top: 10px; }
 }
 
+
+/* Style for images within chat messages */
+.message .chat-image {
+  max-width: 100%; /* Ensure image doesn't overflow the message bubble width */
+  max-height: 300px; /* Limit the maximum height to prevent very tall images */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Ensure it takes up its own line */
+  margin-top: 5px; /* Add some space above the image if there's text */
+  border-radius: 5px; /* Optional: Add rounded corners */
+}

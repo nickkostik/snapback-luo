@@ -62,9 +62,11 @@ async function checkAuthenticationStatus() {
             console.log('Not authenticated. Please log in.');
         } else {
             console.error('Unexpected response when checking authentication:', response.status);
+            loginError.textContent = `Debug: Unexpected auth check status: ${response.status}`; // Add user-visible debug info
         }
     } catch (error) {
         console.error('Error checking authentication status:', error);
+        loginError.textContent = `Debug: Error during auth check: ${error.message}`; // Add user-visible debug info
     }
 }
 
@@ -84,7 +86,9 @@ function triggerAuthentication() {
 }
 
 function showAdminPanel() {
+    console.log('Debug: showAdminPanel() called.'); // Log when function is called
     if (loginContainer && adminContainer) {
+        console.log('Debug: Hiding login container, showing admin container.'); // Log container switch
         loginContainer.style.display = 'none';
         adminContainer.style.display = 'block';
         
@@ -320,4 +324,241 @@ function renderInstructions(container, instructions, isHidden) {
         
         container.appendChild(item);
     });
+}
+// --- Model Selection ---
+
+// DOM Elements for Model Selection
+const currentModelDisplay = document.getElementById('currentModelDisplay');
+const modelSearchInput = document.getElementById('modelSearchInput');
+const modelSelect = document.getElementById('modelSelect');
+const saveModelBtn = document.getElementById('saveModelBtn');
+const modelSaveStatus = document.getElementById('modelSaveStatus');
+
+// State
+let allModels = [];
+let currentModel = '';
+const providerOrder = ['Anthropic', 'OpenAI', 'Qwen', 'Meta (Llama)', 'Mistral', 'Dolphin']; // Add more as needed
+
+// Fetch current model
+async function loadCurrentModel() {
+    if (!currentModelDisplay) return;
+    currentModelDisplay.textContent = 'Loading...';
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat/model`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        currentModel = data.currentModel || 'Not Set'; // <-- FIX: Changed key from data.model
+        currentModelDisplay.textContent = currentModel;
+        // Re-evaluate save button state after loading current model
+        updateSaveButtonState(); 
+    } catch (error) {
+        console.error('Error loading current model:', error);
+        currentModelDisplay.textContent = 'Error loading model';
+        currentModel = ''; // Reset current model on error
+    }
+}
+
+// Fetch all available models
+async function loadAllModels() {
+    if (!modelSelect) return;
+    modelSelect.innerHTML = '<option value="">Loading models...</option>';
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat/debug/models`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        allModels = await response.json();
+        // Sort models alphabetically by ID within their provider group later
+        allModels.sort((a, b) => a.id.localeCompare(b.id)); 
+        populateModelSelect(); // Initial population
+    } catch (error) {
+        console.error('Error loading all models:', error);
+        modelSelect.innerHTML = '<option value="">Error loading models</option>';
+        allModels = []; // Clear models on error
+    }
+}
+
+// Populate the model select dropdown
+function populateModelSelect() {
+    if (!modelSelect) return;
+
+    const searchTerm = modelSearchInput.value.toLowerCase();
+    modelSelect.innerHTML = ''; // Clear existing options
+
+    // Add a default placeholder option
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = "";
+    placeholderOption.textContent = "-- Select a Model --";
+    placeholderOption.disabled = true; // Disable it initially
+    placeholderOption.selected = true; // Make it selected by default
+    modelSelect.appendChild(placeholderOption);
+
+
+    const groupedModels = {};
+
+    // Group models by provider prefix
+    allModels.forEach(model => {
+        let provider = 'Other'; // Default provider
+        const modelIdLower = model.id.toLowerCase();
+
+        if (modelIdLower.startsWith('anthropic/')) provider = 'Anthropic';
+        else if (modelIdLower.startsWith('openai/')) provider = 'OpenAI';
+        else if (modelIdLower.startsWith('google/')) provider = 'Google'; // Added Google as it's common
+        else if (modelIdLower.startsWith('qwen/')) provider = 'Qwen';
+        else if (modelIdLower.startsWith('meta-llama/')) provider = 'Meta (Llama)';
+        else if (modelIdLower.startsWith('mistralai/')) provider = 'Mistral';
+        else if (modelIdLower.startsWith('cognitivecomputations/')) provider = 'Dolphin';
+        // Add more else if conditions for other known providers based on ID prefixes
+
+        // Check if the model matches the search term (either ID or provider name)
+        const providerLower = provider.toLowerCase();
+        if (modelIdLower.includes(searchTerm) || providerLower.includes(searchTerm)) {
+             if (!groupedModels[provider]) {
+                groupedModels[provider] = [];
+            }
+            groupedModels[provider].push(model);
+        }
+    });
+
+    // Function to add options for a provider group
+    const addProviderGroup = (providerName) => {
+        if (groupedModels[providerName] && groupedModels[providerName].length > 0) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = providerName;
+            
+            // Sort models within the group alphabetically by ID
+            groupedModels[providerName].sort((a, b) => a.id.localeCompare(b.id));
+
+            groupedModels[providerName].forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.id;
+                option.textContent = model.name ? `${model.name} (${model.id})` : model.id; // Display name if available
+                // Pre-select the current model if it matches
+                if (model.id === currentModel) {
+                    option.selected = true;
+                    placeholderOption.disabled = false; // Enable placeholder if current model is selected
+                    placeholderOption.selected = false;
+                }
+                optgroup.appendChild(option);
+            });
+            modelSelect.appendChild(optgroup);
+        }
+    };
+
+    // Add groups in the desired order
+    providerOrder.forEach(provider => addProviderGroup(provider));
+
+    // Add any remaining providers (like 'Other' or newly discovered ones)
+    Object.keys(groupedModels)
+        .filter(provider => !providerOrder.includes(provider))
+        .sort() // Sort remaining providers alphabetically
+        .forEach(provider => addProviderGroup(provider));
+        
+    // Re-evaluate save button state after populating
+    updateSaveButtonState(); 
+}
+
+
+// Update save button enabled/disabled state
+function updateSaveButtonState() {
+     if (!saveModelBtn || !modelSelect) return;
+     const selectedValue = modelSelect.value;
+     // Enable if a model is selected AND it's different from the current model
+     saveModelBtn.disabled = !selectedValue || selectedValue === currentModel;
+}
+
+
+// Save the selected model
+async function saveSelectedModel() {
+    if (!modelSelect || !saveModelBtn || !modelSaveStatus) return;
+
+    const selectedModel = modelSelect.value;
+    if (!selectedModel || selectedModel === currentModel) {
+        modelSaveStatus.textContent = 'No changes to save.';
+        modelSaveStatus.style.color = 'orange';
+        return;
+    }
+
+    saveModelBtn.disabled = true;
+    modelSaveStatus.textContent = 'Saving global default model...'; // Update status message
+    modelSaveStatus.style.color = 'blue';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat/default-model`, { // Point to the new endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ model: selectedModel }),
+        });
+
+        if (!response.ok) {
+             const errorData = await response.text(); // Get error details if possible
+             throw new Error(`HTTP error! status: ${response.status} - ${errorData}`);
+        }
+
+        // Success
+        modelSaveStatus.textContent = 'Global default model saved successfully!'; // Update status message
+        modelSaveStatus.style.color = 'green';
+        await loadCurrentModel(); // Refresh the current model display
+        // The save button will be disabled by updateSaveButtonState called within loadCurrentModel
+
+    } catch (error) {
+        console.error('Error saving global default model:', error); // Update console log
+        modelSaveStatus.textContent = `Error saving global default model: ${error.message}`; // Update status message
+        modelSaveStatus.style.color = 'red';
+        saveModelBtn.disabled = false; // Re-enable button on error to allow retry
+    } finally {
+         // Clear status message after a few seconds
+         setTimeout(() => {
+            modelSaveStatus.textContent = '';
+         }, 5000);
+    }
+}
+
+
+// Add Event Listeners for Model Selection
+if (modelSearchInput) {
+    modelSearchInput.addEventListener('input', populateModelSelect);
+}
+
+if (modelSelect) {
+    // Update button state when selection changes
+    modelSelect.addEventListener('change', updateSaveButtonState);
+}
+
+if (saveModelBtn) {
+    saveModelBtn.addEventListener('click', saveSelectedModel);
+}
+
+
+// Modify showAdminPanel to load model data
+const originalShowAdminPanel = showAdminPanel; // Store original function if needed
+showAdminPanel = function() { // Override the function
+    // Call the original logic first (if it exists and you need it)
+    // originalShowAdminPanel(); // Uncomment if you need the original behavior too
+
+    // Original logic from the provided script:
+     if (loginContainer && adminContainer) {
+        loginContainer.style.display = 'none';
+        adminContainer.style.display = 'block';
+        
+        // Load instructions (original behavior)
+        loadSystemInstructions();
+        loadVisibleInstructions();
+        
+        // --- ADDED: Load model data ---
+        loadCurrentModel();
+        loadAllModels();
+        // --- END ADDED ---
+    }
+    // Add any other logic from the original showAdminPanel if necessary
+}
+
+// Initial check in case the admin panel is already shown (e.g., cached auth)
+if (adminContainer && adminContainer.style.display !== 'none') {
+    loadCurrentModel();
+    loadAllModels();
 }

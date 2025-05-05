@@ -468,6 +468,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateSavedInstructionsDisplay(); // Load and display instructions from backend
     updateMemoryList(); // Load and display memory facts
+
+    // --- ADDED: Initialize Model Selection ---
+    loadCurrentModel();
+    loadAllModels();
+    // --- END ADDED ---
 });
 // --- Categorize Instruction Panel Logic ---
 
@@ -549,6 +554,213 @@ if (tagArea) {
     }
 }
 
+// --- Model Selection ---
+
+// DOM Elements for Model Selection
+const currentModelDisplay = document.getElementById('currentModelDisplay');
+const modelSearchInput = document.getElementById('modelSearchInput');
+const modelSelect = document.getElementById('modelSelect');
+const saveModelBtn = document.getElementById('saveModelBtn');
+const modelSaveStatus = document.getElementById('modelSaveStatus');
+
+// State
+let allModels = [];
+let currentModel = '';
+const providerOrder = ['Anthropic', 'OpenAI', 'Qwen', 'Meta (Llama)', 'Mistral', 'Dolphin']; // Add more as needed
+
+// Fetch current model
+async function loadCurrentModel() {
+    if (!currentModelDisplay) return;
+    currentModelDisplay.textContent = 'Loading...';
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat/model`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        currentModel = data.currentModel || 'Not Set'; // <-- FIX: Changed key from data.model
+        currentModelDisplay.textContent = currentModel;
+        // Re-evaluate save button state after loading current model
+        updateSaveButtonState(); 
+    } catch (error) {
+        console.error('Error loading current model:', error);
+        currentModelDisplay.textContent = 'Error loading model';
+        currentModel = ''; // Reset current model on error
+    }
+}
+
+// Fetch all available models
+async function loadAllModels() {
+    if (!modelSelect) return;
+    modelSelect.innerHTML = '<option value="">Loading models...</option>';
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat/debug/models`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        allModels = await response.json();
+        // Sort models alphabetically by ID within their provider group later
+        allModels.sort((a, b) => a.id.localeCompare(b.id)); 
+        populateModelSelect(); // Initial population
+    } catch (error) {
+        console.error('Error loading all models:', error);
+        modelSelect.innerHTML = '<option value="">Error loading models</option>';
+        allModels = []; // Clear models on error
+    }
+}
+
+// Populate the model select dropdown
+function populateModelSelect() {
+    if (!modelSelect) return;
+
+    const searchTerm = modelSearchInput.value.toLowerCase();
+    modelSelect.innerHTML = ''; // Clear existing options
+
+    // Add a default placeholder option
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = "";
+    placeholderOption.textContent = "-- Select a Model --";
+    placeholderOption.disabled = true; // Disable it initially
+    placeholderOption.selected = true; // Make it selected by default
+    modelSelect.appendChild(placeholderOption);
+
+
+    const groupedModels = {};
+
+    // Group models by provider prefix
+    allModels.forEach(model => {
+        let provider = 'Other'; // Default provider
+        const modelIdLower = model.id.toLowerCase();
+
+        if (modelIdLower.startsWith('anthropic/')) provider = 'Anthropic';
+        else if (modelIdLower.startsWith('openai/')) provider = 'OpenAI';
+        else if (modelIdLower.startsWith('google/')) provider = 'Google'; // Added Google as it's common
+        else if (modelIdLower.startsWith('qwen/')) provider = 'Qwen';
+        else if (modelIdLower.startsWith('meta-llama/')) provider = 'Meta (Llama)';
+        else if (modelIdLower.startsWith('mistralai/')) provider = 'Mistral';
+        else if (modelIdLower.startsWith('cognitivecomputations/')) provider = 'Dolphin';
+        // Add more else if conditions for other known providers based on ID prefixes
+
+        // Check if the model matches the search term (either ID or provider name)
+        const providerLower = provider.toLowerCase();
+        if (modelIdLower.includes(searchTerm) || providerLower.includes(searchTerm)) {
+             if (!groupedModels[provider]) {
+                groupedModels[provider] = [];
+            }
+            groupedModels[provider].push(model);
+        }
+    });
+
+    // Function to add options for a provider group
+    const addProviderGroup = (providerName) => {
+        if (groupedModels[providerName] && groupedModels[providerName].length > 0) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = providerName;
+            
+            // Sort models within the group alphabetically by ID
+            groupedModels[providerName].sort((a, b) => a.id.localeCompare(b.id));
+
+            groupedModels[providerName].forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.id;
+                option.textContent = model.name ? `${model.name} (${model.id})` : model.id; // Display name if available
+                // Pre-select the current model if it matches
+                if (model.id === currentModel) {
+                    option.selected = true;
+                    placeholderOption.disabled = false; // Enable placeholder if current model is selected
+                    placeholderOption.selected = false;
+                }
+                optgroup.appendChild(option);
+            });
+            modelSelect.appendChild(optgroup);
+        }
+    };
+
+    // Add groups in the desired order
+    providerOrder.forEach(provider => addProviderGroup(provider));
+
+    // Add any remaining providers (like 'Other' or newly discovered ones)
+    Object.keys(groupedModels)
+        .filter(provider => !providerOrder.includes(provider))
+        .sort() // Sort remaining providers alphabetically
+        .forEach(provider => addProviderGroup(provider));
+        
+    // Re-evaluate save button state after populating
+    updateSaveButtonState(); 
+}
+
+
+// Update save button enabled/disabled state
+function updateSaveButtonState() {
+     if (!saveModelBtn || !modelSelect) return;
+     const selectedValue = modelSelect.value;
+     // Enable if a model is selected AND it's different from the current model
+     saveModelBtn.disabled = !selectedValue || selectedValue === currentModel;
+}
+
+
+// Save the selected model
+async function saveSelectedModel() {
+    if (!modelSelect || !saveModelBtn || !modelSaveStatus) return;
+
+    const selectedModel = modelSelect.value;
+    if (!selectedModel || selectedModel === currentModel) {
+        modelSaveStatus.textContent = 'No changes to save.';
+        modelSaveStatus.style.color = 'orange';
+        return;
+    }
+
+    saveModelBtn.disabled = true;
+    modelSaveStatus.textContent = 'Saving...';
+    modelSaveStatus.style.color = 'blue';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat/model`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ model: selectedModel }),
+        });
+
+        if (!response.ok) {
+             const errorData = await response.text(); // Get error details if possible
+             throw new Error(`HTTP error! status: ${response.status} - ${errorData}`);
+        }
+
+        // Success
+        modelSaveStatus.textContent = 'Model saved successfully!';
+        modelSaveStatus.style.color = 'green';
+        await loadCurrentModel(); // Refresh the current model display
+        // The save button will be disabled by updateSaveButtonState called within loadCurrentModel
+
+    } catch (error) {
+        console.error('Error saving model:', error);
+        modelSaveStatus.textContent = `Error saving model: ${error.message}`;
+        modelSaveStatus.style.color = 'red';
+        saveModelBtn.disabled = false; // Re-enable button on error to allow retry
+    } finally {
+         // Clear status message after a few seconds
+         setTimeout(() => {
+            modelSaveStatus.textContent = '';
+         }, 5000);
+    }
+}
+
+
+// Add Event Listeners for Model Selection
+if (modelSearchInput) {
+    modelSearchInput.addEventListener('input', populateModelSelect);
+}
+
+if (modelSelect) {
+    // Update button state when selection changes
+    modelSelect.addEventListener('change', updateSaveButtonState);
+}
+
+if (saveModelBtn) {
+    saveModelBtn.addEventListener('click', saveSelectedModel);
+}
 // --- Placeholder Listeners for Other Buttons ---
 
 const startWizardBtn = document.getElementById('startWizardBtn');

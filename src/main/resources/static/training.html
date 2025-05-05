@@ -66,6 +66,29 @@
              <button id="exportFinetuneBtn" class="button-style" style="margin-top: 20px;">Export for Fine-tuning (JSONL)</button>
         </div>
 
+<!-- Model Selection Panel -->
+        <div class="card"> <!-- Added card class for consistency -->
+            <div class="panel-header">
+                <h2>Model Selection</h2>
+                <button id="saveModelBtn" class="button-style" disabled>Save Model</button>
+            </div>
+            <p>Select the AI model identifier to be used for chat interactions.</p>
+            <div>
+                <strong>Current Model:</strong> <span id="currentModelDisplay">Loading...</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <label for="modelSearchInput">Search Models:</label>
+                <input type="text" id="modelSearchInput" class="instruction-input" placeholder="Search by name or provider...">
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="modelSelect">Select New Model:</label>
+                <select id="modelSelect" class="instruction-input" style="width: 100%;">
+                    <option value="">Loading models...</option>
+                    <!-- Models will be populated here by JavaScript -->
+                </select>
+            </div>
+            <div id="modelSaveStatus" style="margin-top: 10px; color: green;"></div>
+        </div>
         <!-- 4. Behavior Categories Panel Card -->
         <div class="card">
             <h2>Categorize Custom Instruction</h2>
@@ -128,7 +151,7 @@
    </main>
 
     <footer>
-        <p>© Snapback Luo - AI Persona Demo</p>
+        <p>© Snapback Luo - AI Persona</p>
     </footer>
 
     <script src="training_script.js"></script>

@@ -122,18 +122,41 @@ function removeAttachedFile() {
 
 
 // --- Chat Display Functions (Unchanged) ---
-function addMessage(sender, text, fileName = null) {
+function addMessage(sender, text, imageData = null) { // Added imageData parameter
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', sender);
-    const textSpan = document.createElement('span');
-    let messageContent = text;
-    if (sender === 'user' && fileName) {
-        messageContent += ` <span class="file-mention">(Attached: ${fileName})</span>`;
-        textSpan.innerHTML = messageContent;
-    } else {
-        textSpan.textContent = messageContent;
+
+    // Handle Image Data
+    if (imageData && imageData.mimeType && imageData.mimeType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = `data:${imageData.mimeType};base64,${imageData.data}`;
+        img.alt = imageData.name || (sender === 'user' ? 'User uploaded image' : 'AI generated image'); // Use filename or default alt text
+        img.classList.add('chat-image'); // Add a class for styling
+        messageDiv.appendChild(img);
+        // Optionally, add the text as a caption or alongside, if text also exists
+        if (text) {
+             const textSpan = document.createElement('span');
+             textSpan.textContent = text;
+             // Add class for potential styling of text accompanying an image
+             textSpan.classList.add('image-caption');
+             messageDiv.appendChild(textSpan); // Append text after image
+        }
     }
-    messageDiv.appendChild(textSpan);
+    // Handle Text Data (if no image or if text should be shown alongside image)
+    else if (text) { // Changed from simple 'else' to 'else if (text)'
+        const textSpan = document.createElement('span');
+        textSpan.textContent = text; // Use textContent for safety
+        messageDiv.appendChild(textSpan);
+    }
+    // Handle case where there's neither text nor a valid image (e.g., user only attached non-image file)
+    else if (imageData && imageData.name) { // Check if it was a file attachment (even non-image)
+         const textSpan = document.createElement('span');
+         // Display filename for non-image files or if image rendering failed but we have a name
+         textSpan.innerHTML = `<span class="file-mention">(Attached: ${imageData.name})</span>`;
+         messageDiv.appendChild(textSpan);
+    }
+    // If imageData exists but isn't an image, and no text, the message div might be empty, which is fine.
+
     chatbox.appendChild(messageDiv);
     chatbox.scrollTop = chatbox.scrollHeight;
 }
@@ -186,7 +209,7 @@ async function getLuisResponse() {
     // --- API Key is now handled by the backend ---
     // No need to get/check API key here anymore.
 
-    addMessage('user', userText || '(File attached)', attachedFileData?.name);
+    addMessage('user', userText || '', attachedFileData); // Pass full imageData object
     userInput.value = ''; // Clear input after sending
     showTypingIndicator();
 
@@ -227,26 +250,53 @@ async function getLuisResponse() {
 
         removeTypingIndicator();
 
-        // Check if the response status indicates an error (like 429 Too Many Requests or 500 Internal Server Error)
+        // Check if the response status indicates an error
         if (!response.ok) {
-            // Try to read response as text first in case it's not JSON
-            const errorText = await response.text();
-            console.error(`Backend Error Response (Status: ${response.status}):`, errorText);
-            let errorMessage = `Error: ${response.statusText || 'Unknown error'}`;
-            try {
-                // Attempt to parse as JSON *after* logging the raw text
-                const errorData = JSON.parse(errorText);
-                errorMessage = `Error: ${errorData?.error || response.statusText || 'Unknown error'}`;
-            } catch (e) {
-                // If JSON parsing fails, use the raw text (truncated if too long)
-                errorMessage = `Error: ${response.status} - ${errorText.substring(0, 100)}${errorText.length > 100 ? '...' : ''}`;
+            const errorStatus = response.status;
+            const errorText = await response.text(); // Read error response body
+            console.error(`Backend Error Response (Status: ${errorStatus}):`, errorText);
+
+            let errorMessage = `Error: ${response.statusText || 'Unknown error'}`; // Default message
+            let displayMessage = ''; // Message to show the user
+
+            // Specific handling for 403 Forbidden (Trial Limit)
+            if (errorStatus === 403) {
+                try {
+                    const errorData = JSON.parse(errorText);
+                    // Check if the specific trial limit error message is present
+                    if (errorData && errorData.error && errorData.error.includes("Trial prompt limit")) {
+                         displayMessage = "Trial limit reached. Please go to API Key Setup to enter your own OpenRouter key.";
+                    } else {
+                        // Other 403 error
+                        errorMessage = `Forbidden: ${errorData?.error || errorText}`;
+                        displayMessage = `Error: Access denied. (${errorMessage})`;
+                    }
+                } catch (e) {
+                    // If parsing fails but status is 403, it might still be the limit message (if backend sent plain text)
+                    if (errorText.includes("Trial prompt limit")) {
+                         displayMessage = "Trial limit reached. Please go to API Key Setup to enter your own OpenRouter key.";
+                    } else {
+                        errorMessage = `Forbidden: ${errorText}`;
+                        displayMessage = `Error: Access denied. (${errorMessage.substring(0, 100)})`;
+                    }
+                }
+            } else {
+                // Generic handling for other errors (401, 429, 5xx, etc.)
+                try {
+                    const errorData = JSON.parse(errorText);
+                    errorMessage = `Error ${errorStatus}: ${errorData?.error || response.statusText || 'Unknown error'}`;
+                } catch (e) {
+                    errorMessage = `Error ${errorStatus}: ${errorText.substring(0, 100)}${errorText.length > 100 ? '...' : ''}`;
+                }
+                displayMessage = errorMessage; // Show the constructed error message
             }
-            addMessage('error', errorMessage);
+
+            addMessage('error', displayMessage); // Display the appropriate message to the user
             conversationHistory.pop(); // Remove user message from history if backend call failed
-            return;
+            return; // Stop processing on error
         }
 
-        // Handle successful response from backend
+        // Handle successful response from backend (2xx)
         const data = await response.json(); // Parse backend's ChatResponse
         console.log("Backend Success Response:", data);
 

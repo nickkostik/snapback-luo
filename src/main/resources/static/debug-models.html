@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenRouter Models Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #result {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .model-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .current-model {
+            background-color: #ffffcc;
+            border: 2px solid #ffcc00;
+        }
+        .model-id {
+            font-weight: bold;
+        }
+        .model-context {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>OpenRouter Models Debug</h1>
+    <button id="fetchModels">Fetch Available Models</button>
+    <div id="currentModel"></div>
+    <div id="modelsList"></div>
+    <h2>Raw Response:</h2>
+    <pre id="result">Click the button to fetch models...</pre>
+
+    <script>
+        document.getElementById('fetchModels').addEventListener('click', async () => {
+            const resultElement = document.getElementById('result');
+            const modelsListElement = document.getElementById('modelsList');
+            const currentModelElement = document.getElementById('currentModel');
+            
+            resultElement.textContent = 'Loading...';
+            modelsListElement.innerHTML = '';
+            currentModelElement.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/chat/debug/models');
+                const data = await response.json();
+                
+                // Display raw response
+                resultElement.textContent = JSON.stringify(data, null, 2);
+                
+                // Display current model
+                if (data.currentModel) {
+                    currentModelElement.innerHTML = `<h2>Current Model: <span style="color: #ff6600;">${data.currentModel}</span></h2>`;
+                }
+                
+                // Display models in a more readable format
+                if (data.models && data.models.data) {
+                    const models = data.models.data;
+                    modelsListElement.innerHTML = '<h2>Available Models:</h2>';
+                    
+                    models.forEach(model => {
+                        const isCurrentModel = model.id === data.currentModel;
+                        const modelCard = document.createElement('div');
+                        modelCard.className = `model-card ${isCurrentModel ? 'current-model' : ''}`;
+                        
+                        modelCard.innerHTML = `
+                            <div class="model-id">${model.id}</div>
+                            <div class="model-context">Context: ${model.context_length || 'N/A'}</div>
+                            <div>Provider: ${model.provider || 'N/A'}</div>
+                        `;
+                        
+                        modelsListElement.appendChild(modelCard);
+                    });
+                }
+            } catch (error) {
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
