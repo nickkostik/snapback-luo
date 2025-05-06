@@ -1,107 +1,151 @@
-# Development Guide: Snapback Luo Backend
+# Development Guide: Snapback Luo Python Backend
 
-This guide focuses on the development workflow for the Snapback Luo backend, specifically leveraging Spring Boot DevTools for automatic application restarts and browser LiveReload.
+This guide provides instructions specifically for developers working on the Python Flask backend of the Snapback Luo project. It covers setup, running the application locally, understanding the code structure, and other development-specific details.
 
-For a complete project overview, setup instructions (including mandatory API key configuration), deployment details, and feature explanations, please refer to the main [README.md](README.md).
+For a general project overview, user setup (including mandatory API key configuration for deployment), and feature explanations, please refer to the main [README.md](../README.md).
 
-## Prerequisites
+## Developer Setup
 
-*   **JDK 17+**: Ensure you have Java Development Kit version 17 or higher installed and configured.
-*   **OpenRouter API Key**: For the standard development workflow (`./mvnw spring-boot:run`), you **must** set the `OPENROUTER_API_KEY` environment variable. See `README.md` section 4.3 for details on how to set it.
-
-## Development Workflow with DevTools
-
-The project includes the `spring-boot-devtools` dependency (see `pom.xml`), which provides features to speed up the development cycle. These are enabled by default via settings in `src/main/resources/application.properties`.
-
-### Key Features Enabled:
-
-*   **Automatic Restart**: When you save changes to Java files (in `src/main/java`) or configuration files (like `application.properties`), Spring Boot DevTools will automatically restart the application context quickly. You'll see restart logs in the console.
-*   **LiveReload**: When you save changes to static resources (HTML, CSS, JavaScript files in `src/main/resources/static`), DevTools triggers a LiveReload event. If you have the LiveReload browser extension installed and enabled, your browser will automatically refresh the page.
-*   **Disabled Caching**: Static resources are served with caching disabled (`spring.resources.cache.period=0` in `application.properties`) during development to ensure you always see the latest changes.
-
-### Recommended LiveReload Browser Extension:
-
-Install the extension for your browser to take advantage of automatic page refreshes:
-
-*   [Chrome LiveReload Extension](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
-*   [Firefox LiveReload Extension](https://addons.mozilla.org/en-US/firefox/addon/livereload-web-extension/)
-
-Remember to enable the extension in your browser tab after starting the application.
-
-## Running the Application for Development
-
-There are two main ways to run the application during development:
-
-### Option 1: Standard Development Run (Recommended)
-
-This method uses the standard Spring Boot Maven plugin and respects the configurations in `application.properties`.
-
-1.  **Set API Key**: Ensure the `OPENROUTER_API_KEY` environment variable is set in your terminal session (see Prerequisites and `README.md`).
-2.  **Run:**
+1.  **Python:** Ensure you have a compatible version of Python 3 installed.
+2.  **Virtual Environment:** It is highly recommended to use a virtual environment to manage dependencies.
     ```bash
-    # Linux/macOS
-    ./mvnw spring-boot:run
+    # Navigate to the project root (snapback-luo)
+    cd /path/to/snapback-luo
 
-    # Windows
-    mvnw.cmd spring-boot:run
+    # Create a virtual environment within the python_backend directory
+    python3 -m venv python_backend/venv
+
+    # Activate the virtual environment
+    # On Linux/macOS:
+    source python_backend/venv/bin/activate
+    # On Windows:
+    # python_backend\venv\Scripts\activate
     ```
-3.  **Behavior:**
-    *   Starts the application on the port defined in `application.properties` (default: `8000`).
-    *   Uses the `OPENROUTER_API_KEY` from your environment.
-    *   **DevTools (Restart & LiveReload) are automatically active.**
-
-This is the recommended approach for most development tasks as it mirrors the standard configuration.
-
-### Option 2: Using the `run-dev.sh` Script (Quick Test)
-
-This script provides a quick way to run the application but with specific overrides. **Use with caution and be aware of its behavior.**
-
-1.  **Make Script Executable (One-time):**
+3.  **Install Dependencies:** With the virtual environment activated, install the required packages:
     ```bash
-    chmod +x run-dev.sh
+    pip install -r python_backend/requirements.txt
     ```
-2.  **(Important) Check/Edit API Key in Script:** The script uses a **hardcoded** OpenRouter API key inside `run-dev.sh`. This key might be invalid or need updating. **It bypasses the `OPENROUTER_API_KEY` environment variable.**
-3.  **Run:**
-    ```bash
-    ./run-dev.sh
-    ```
-4.  **Behavior:**
-    *   Sets a specific `JAVA_HOME` path within the script.
-    *   Forces the application to run on port **8081**.
-    *   Uses the **hardcoded** API key from within the script.
-    *   **DevTools (Restart & LiveReload) are explicitly enabled via command-line arguments.**
 
-Use this script primarily for quick tests where the hardcoded key and different port (8081) are acceptable and understood.
+## Environment Variables (`.env`)
 
-## DevTools Configuration (`application.properties`)
+The backend configuration is managed via environment variables loaded from a `.env` file located in the `python_backend/` directory. You **must** create this file for the application to run.
 
-The following settings in `src/main/resources/application.properties` control the DevTools behavior:
+**Create `python_backend/.env` with the following variables:**
 
-```properties
-# DevTools Configuration
-spring.devtools.restart.enabled=true
-spring.devtools.livereload.enabled=true
-# Watch static files for changes too
-spring.devtools.restart.additional-paths=src/main/resources/static
-# Serve static files from classpath:/static/
-spring.resources.static-locations=classpath:/static/
-# Disable caching for static resources during development
-spring.resources.cache.period=0
+```dotenv
+# Flask specific
+FLASK_SECRET_KEY='your_strong_random_secret_key_here' # CHANGE THIS! Used for session security. Generate a strong random key.
+
+# Database
+DATABASE_URL='sqlite:///snapback.db' # Default: SQLite file in python_backend/. Can be changed to PostgreSQL, etc.
+
+# Core Functionality
+OPENROUTER_API_KEY='your_openrouter_api_key_here' # **REQUIRED** Your API key from OpenRouter.ai for chat functionality.
+
+# Admin Authentication
+ADMIN_USERNAME='admin' # Username for accessing admin/protected API routes.
+ADMIN_PASSWORD='your_secure_admin_password' # CHANGE THIS! Password for the admin user.
+
+# Server Configuration
+PORT=8000 # Port the development server will run on.
+CLOUDFLARE_ENABLED=false # Set to true if deploying behind Cloudflare Tunnel (affects request IP handling).
 ```
 
-These settings ensure DevTools are active when running via `./mvnw spring-boot:run`. The `run-dev.sh` script also passes flags to ensure they are enabled, but these properties are the primary configuration.
+**Important Notes:**
+*   Replace placeholder values (like secret keys and passwords) with your actual secure values.
+*   The `OPENROUTER_API_KEY` is essential for the chat functionality to work. Obtain one from [OpenRouter.ai](https://openrouter.ai/).
+*   Ensure the `.env` file is **never** committed to version control (it should be listed in `python_backend/.gitignore`).
 
-## Troubleshooting DevTools
+## Running Locally for Development
 
-*   **Restart Not Happening**:
-    *   Ensure you saved the file.
-    *   Verify the changed file is under a path monitored by DevTools (e.g., `src/main/java`, `src/main/resources`).
-    *   Check the console output for restart logs or any errors during restart.
-    *   Ensure the application was started using one of the methods described above.
-*   **LiveReload Not Working**:
-    *   Ensure the LiveReload browser extension is installed AND enabled for the page.
-    *   Verify you are changing files within `src/main/resources/static`.
-    *   Check the browser's developer console and the application console for errors.
-    *   Ensure `spring.devtools.livereload.enabled=true` is set (it is by default in `application.properties`).
+1.  **Ensure `.env` is created and configured** in the `python_backend/` directory as described above.
+2.  **Activate your virtual environment** (`source python_backend/venv/bin/activate`).
+3.  **Run the development server:**
+    ```bash
+    # From the root snapback-luo directory
+    python python_backend/run.py
+    ```
+    Alternatively, you can use the `flask` command (ensure `FLASK_APP` is set):
+    ```bash
+    # Set FLASK_APP environment variable (if not already set by your shell)
+    export FLASK_APP=python_backend
 
-Refer to the main [README.md](README.md) for general troubleshooting (API key issues, port conflicts, database problems, etc.).
+    # Run the Flask development server
+    flask run --host=0.0.0.0 --port=8000 # Or the port specified in .env
+    ```
+4.  **Access the application:** Open your browser and navigate to `http://0.0.0.0:<PORT>` (e.g., `http://0.0.0.0:8000` if using the default port).
+
+**Note:** The Flask development server (`python run.py` or `flask run`) is suitable for development and debugging but **not recommended for production**. Use a production-grade WSGI server like Gunicorn for deployment (see Deployment section).
+
+## Code Structure Overview
+
+The Python backend code is organized within the `python_backend/` directory:
+
+*   `__init__.py`: Contains the application factory (`create_app`) where the Flask app is initialized, extensions (like SQLAlchemy, CORS, HTTPAuth) are configured, and blueprints are registered.
+*   `run.py`: Simple script acting as the entry point for running the Flask development server.
+*   `config.py`: Defines the `Config` class responsible for loading environment variables from the `.env` file.
+*   `models.py`: Defines the SQLAlchemy database models:
+    *   `User`: For admin authentication.
+    *   `MemoryFact`: Stores persona memory facts.
+    *   `TrainingInstruction`: Stores persona training instructions.
+    *   `ApiKey`: Stores API keys for external access (if implemented).
+*   `routes/`: This directory contains Flask Blueprints, organizing API endpoints by functionality:
+    *   `auth_controller.py`: Handles admin login (`/admin/login`) and potentially logout.
+    *   `chat_controller.py`: Manages the main `/chat` endpoint, interacting with the OpenRouter API.
+    *   `memory_fact_controller.py`: Provides CRUD API endpoints (`/api/memory`) for managing memory facts (requires admin authentication).
+    *   `training_instruction_controller.py`: Provides CRUD API endpoints (`/api/training`) for managing training instructions (requires admin authentication).
+    *   *(Potentially others like `api_key_controller.py`)*
+*   `requirements.txt`: Lists Python package dependencies.
+*   `.env`: (You create this) Stores environment variables.
+*   `.gitignore`: Specifies files/directories to be ignored by Git.
+*   `venv/`: (Created by you) Contains the Python virtual environment.
+
+## Database
+
+*   **ORM:** Uses Flask-SQLAlchemy.
+*   **Models:** Defined in `python_backend/models.py`.
+*   **Default Database:** A SQLite database file named `snapback.db` will be created within the `python_backend/` directory when the application first runs (based on the default `DATABASE_URL` in `.env`).
+*   **Configuration:** The database connection string can be changed via the `DATABASE_URL` environment variable in `.env` to support other databases like PostgreSQL.
+*   **Initialization/Migrations:** The application currently uses `db.create_all()` within the app context to create tables based on the models if they don't exist. For more complex schema changes or production environments, implementing database migrations using a tool like Flask-Migrate (Alembic) would be recommended. *(Currently, no migration tool seems to be configured).*
+
+## API Details
+
+*   **Authentication:** Routes under `/admin` and `/api` (excluding `/chat` and potentially `/api/keys/setup`) are protected using Basic Authentication via Flask-HTTPAuth. Credentials (`ADMIN_USERNAME`, `ADMIN_PASSWORD`) are configured in the `.env` file.
+*   **Key Endpoints:**
+    *   `/`: Serves the main static frontend (`index.html`).
+    *   `/admin`: Serves the admin interface (`admin.html`).
+    *   `/training`: Serves the training interface (`training.html`).
+    *   `/api_key_setup`: Serves the API key setup page (`api_key_setup.html`).
+    *   `/chat` (POST): Handles user chat messages.
+    *   `/admin/login` (POST): Authenticates the admin user.
+    *   `/api/memory` (GET, POST): List/Create memory facts.
+    *   `/api/memory/<id>` (PUT, DELETE): Update/Delete specific memory facts.
+    *   `/api/training` (GET, POST): List/Create training instructions.
+    *   `/api/training/<id>` (PUT, DELETE): Update/Delete specific training instructions.
+    *   *(Check controllers for exact routes and methods)*
+
+## Testing
+
+*(Currently, no automated tests seem to be included in the repository. Setting up a testing framework like `pytest` with fixtures for Flask applications is recommended for future development.)*
+
+## Deployment
+
+*   **Server:** Use a production-grade WSGI server like Gunicorn. Do **not** use the Flask development server in production.
+*   **Example Gunicorn Command:**
+    ```bash
+    # Ensure gunicorn is installed (pip install gunicorn)
+    # Run from the root snapback-luo directory
+    gunicorn --workers 4 --bind 0.0.0.0:<PORT> 'python_backend:create_app()'
+    ```
+    Replace `<PORT>` with the desired production port. Adjust the number of workers (`-w 4`) based on your server resources.
+*   **Environment Variables:** Ensure the `.env` file (or equivalent environment variables set directly on the server) is present and correctly configured in the production environment. **Pay special attention to `FLASK_SECRET_KEY` and database credentials.**
+*   **Cloudflare:** If deploying behind Cloudflare Tunnel, set `CLOUDFLARE_ENABLED=true` in your production `.env` file so the application correctly identifies the client's IP address.
+
+## Troubleshooting Common Issues
+
+*   **`ModuleNotFoundError`:** Ensure your virtual environment is activated and dependencies are installed (`pip install -r python_backend/requirements.txt`).
+*   **`FileNotFoundError: [Errno 2] No such file or directory: 'python_backend/.env'`:** You forgot to create the `python_backend/.env` file.
+*   **Authentication Errors (401 Unauthorized):** Double-check `ADMIN_USERNAME` and `ADMIN_PASSWORD` in your `.env` file and ensure you are providing them correctly (e.g., via Basic Auth headers or browser prompt).
+*   **Chat Not Working / API Errors:** Verify your `OPENROUTER_API_KEY` in `.env` is correct and valid. Check the Flask console output for specific error messages from the OpenRouter API.
+*   **Port Conflicts:** If another application is using the port defined in `.env` (default 8000), the server won't start. Change the `PORT` in `.env` or stop the other application.
+*   **Database Errors:** Check the `DATABASE_URL` in `.env`. If using SQLite, ensure the application has write permissions in the `python_backend/` directory. If using another DB, verify connection details and that the database server is running.
