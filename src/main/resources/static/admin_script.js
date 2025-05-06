@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Authentication Functions
 async function checkAuthenticationStatus() {
     try {
-        // Try to access a protected endpoint to check if we're authenticated
-        const response = await fetch(`${API_BASE_URL}/instructions/add-hidden`, {
-            method: 'HEAD',
+        // Use the dedicated auth check endpoint
+        const response = await fetch(`${API_BASE_URL}/auth/check`, {
+            method: 'GET', // Use GET for the dedicated endpoint
             credentials: 'include' // Important: include credentials for auth
         });
-        
-        if (response.ok || response.status === 405) { // 405 Method Not Allowed means we're authenticated but HEAD is not supported
+
+        if (response.ok) { // Check for 200 OK from the dedicated endpoint
             // If we can access the protected endpoint, we're authenticated
             showAdminPanel();
         } else if (response.status === 401 || response.status === 403) {
@@ -71,17 +71,18 @@ async function checkAuthenticationStatus() {
 }
 
 function triggerAuthentication() {
-    // This will trigger the browser's HTTP Basic Auth dialog
-    fetch(`${API_BASE_URL}/instructions/add-hidden`, {
-        method: 'HEAD',
+    // Use the dedicated auth check endpoint to trigger the dialog
+    fetch(`${API_BASE_URL}/auth/check`, {
+        method: 'GET', // Use GET for the dedicated endpoint
         credentials: 'include',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
     }).then(response => {
-        if (response.ok || response.status === 405) {
+        if (response.ok) { // Check for 200 OK
             showAdminPanel();
         }
+        // No need to handle 405 anymore
     });
 }
 

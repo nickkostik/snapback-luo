@@ -1,0 +1,11 @@
+# Virtual environment
+venv/
+
+# Bytecode files
+__pycache__/
+*.pyc
+*.pyo
+
+# Database files
+instance/
+*.sqlite
