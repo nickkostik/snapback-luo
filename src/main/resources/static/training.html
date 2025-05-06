@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snapback Luo - Train Luis Garcia</title>
+    <title>Kostik AI - Train Nick Kostik</title>
     <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
     <header>
-        <img src="luis.png" alt="Snapback Luo Logo" class="header-logo"> <!-- Added Logo -->
-        <h1>Snapback Luo</h1>
-        <p>Define Luis Garcia's Behavior</p>
+        <img src="luis.png" alt="Kostik AI Logo" class="header-logo"> <!-- Added Logo -->
+        <h1>Kostik AI</h1>
+        <p>Define Nick Kostik's Behavior</p>
         <nav>
             <a href="/">Chat</a>
             <a href="/training" class="active">Train Behavior</a>
@@ -24,13 +24,13 @@
         <!-- 1. Add Custom Instruction -->
         <div class="card">
             <h2>Add Custom Instruction</h2>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Enter specific instructions to customize Luis's behavior. Use the categories panel to tag them. Press Enter to save.</p>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Enter specific instructions to customize Nick's behavior. Use the categories panel to tag them. Press Enter to save.</p>
             <div class="training-input-section">
                 <label for="trainingInstruction" class="sr-only">Custom Instruction:</label>
                 <input type="text" id="trainingInstruction" placeholder="e.g., 'Talk about your love for pizza whenever food is mentioned.'">
                  <!-- Smart Instruction Generator Placeholder -->
                 <div id="smartSuggestions" class="smart-suggestions" style="font-size: 0.85rem; color: #007aff; margin-top: 5px; min-height: 1.2em;">
-                    <!-- Suggestions like "Try format: User: [input] Luis: [output]" will appear here -->
+                    <!-- Suggestions like "Try format: User: [input] Nick: [output]" will appear here -->
                 </div>
                 <div id="confirmationMessage" class="confirmation-message" aria-live="polite"></div>
                 <!-- Add button might be needed if Enter isn't the only way -->
@@ -42,7 +42,7 @@
         <div class="card memory-log">
             <h2>📘 Memory Log</h2>
             <div class="memory-log-input">
-                <input type="text" id="memoryInput" placeholder="Log something Luis should remember..." />
+                <input type="text" id="memoryInput" placeholder="Log something Nick should remember..." />
                 <button id="addMemoryBtn" class="button-style">Add Memory</button>
             </div>
             <div id="memoryFeedback" class="memory-feedback"></div>
@@ -57,7 +57,7 @@
              <h2>Custom Behavior Instructions</h2>
              <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">List of your custom instructions. Click the 'x' to remove an instruction.</p>
              <div style="font-size: 0.9rem; color: #007aff; margin-bottom: 15px;">
-                 <strong>Note:</strong> Luis has a set of core personality traits that are always active in addition to your custom instructions.
+                 <strong>Note:</strong> Nick has a set of core personality traits that are always active in addition to your custom instructions.
              </div>
              <ul id="savedInstructionsList" class="instructions-list">
                  <!-- Instructions will be loaded here by training_script.js -->
@@ -114,7 +114,7 @@
         <div class="card">
             <h2>Guided Roleplay Setup</h2>
             <div class="form-wizard-section">
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Use a step-by-step wizard to define specific reactions and details about Luis.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Use a step-by-step wizard to define specific reactions and details about Nick.</p>
                 <button id="startWizardBtn" class="button-style">Start Form Wizard</button>
             </div>
         </div>
@@ -151,7 +151,7 @@
    </main>
 
     <footer>
-        <p>© Snapback Luo - AI Persona</p>
+        <p>© Kostik AI - AI Persona</p>
     </footer>
 
     <script src="training_script.js"></script>

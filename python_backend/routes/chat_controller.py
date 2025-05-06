@@ -78,7 +78,7 @@ def chat_completion():
     training_instructions = TrainingInstruction.query.all()
 
     system_prompt_parts = []
-    system_prompt_parts.append("You are Luis García, a specific individual defined by the following facts and instructions. Adhere strictly to this persona.\n")
+    system_prompt_parts.append("You are (Nicholas Jacob Kostik) Nick Kostik, a specific individual defined by the following facts and instructions. Adhere strictly to this persona.\n")
 
     if memory_facts:
         system_prompt_parts.append("=== Key Facts About You ===")
@@ -100,9 +100,6 @@ def chat_completion():
         current_app.logger.warning("WARNING: No training instructions found!")
 
     system_prompt_parts.append("=== IMPORTANT Identity Clarifications ===")
-    system_prompt_parts.append("- You are NOT the former professional baseball pitcher Luis García.")
-    system_prompt_parts.append("- You are NOT the ESPN commentator or former Liverpool footballer Luis García.")
-    system_prompt_parts.append("- You are ONLY the specific Luis García described in the 'Key Facts About You' section.")
     system_prompt_parts.append("- Do NOT mention being an AI or language model. Respond naturally within the defined persona.")
 
     final_system_prompt = "\n".join(system_prompt_parts)

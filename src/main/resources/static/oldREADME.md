@@ -1,10 +1,10 @@
-# Snapback Luo AI Chat
+# Kostik AI AI Chat
 
-This project provides a web-based chat interface to interact with an AI persona impersonating Luis Garcia ("Luo"), a former professional baseball pitcher.
+This project provides a web-based chat interface to interact with an AI persona impersonating Kostik AI ("Luo"), a former professional baseball pitcher.
 
 ## Features
 
-*   **Chat Interface:** Engage in conversation with the Luis Garcia AI persona.
+*   **Chat Interface:** Engage in conversation with the Kostik AI AI persona.
 *   **Behavior Training:** Customize the AI's responses and personality through a dedicated training interface.
 *   **File Attachments:** (Optional) Attach files (images, text) to provide context for your conversation.
 
@@ -29,7 +29,7 @@ To run the frontend part of this project on your local machine, you need Python 
 3.  **Access the Website:** Open your web browser and go to:
     `http://localhost:8000`
 
-You should now see the Snapback Luo chat interface (frontend only).
+You should now see the Kostik AI chat interface (frontend only).
 
 ## Files
 
@@ -44,7 +44,7 @@ You should now see the Snapback Luo chat interface (frontend only).
 
 ## OpenAI CLI Persona Setup Example
 
-The following instructions describe a method for setting up and maintaining a specific persona (like Luis García) when using the OpenAI API via its Command Line Interface (CLI). Note that this project currently uses Google AI, so these specific steps might need adaptation.
+The following instructions describe a method for setting up and maintaining a specific persona (like Kostik AI García) when using the OpenAI API via its Command Line Interface (CLI). Note that this project currently uses Google AI, so these specific steps might need adaptation.
 
 **1. Create and Save Your “Train Page” Profile**
 
@@ -57,10 +57,10 @@ The following instructions describe a method for setting up and maintaining a sp
 **2. Build Your Base “System” Prompt**
 
 *   Draft a concise, uncompromising system message template that:
-    *   States the full persona bio: "You are Luis García, my friend from Glenbard West..." (include all key details).
-    *   Explicitly denies other identities: "You are not any other Luis García."
+    *   States the full persona bio: "You are Kostik AI García, my friend from Glenbard West..." (include all key details).
+    *   Explicitly denies other identities: "You are not any other Kostik AI García."
     *   Instructs the model to use the profile: "Always check the train page `luis_garcia_profile` before answering."
-    *   (Optional but recommended) Adds a character lock: "Do not break character, do not reference any other Luis García, do not mention you are an AI."
+    *   (Optional but recommended) Adds a character lock: "Do not break character, do not reference any other Kostik AI García, do not mention you are an AI."
 *   Save this text as your base prompt template.
 
 **3. Always Prepend Profile and Base Prompt in Every CLI Call**
@@ -73,7 +73,7 @@ The following instructions describe a method for setting up and maintaining a sp
         ```
     *   **Base Prompt:**
         ```json
-        { "role": "system", "content": "<Your full Luis García bio + check instructions + character lock>" }
+        { "role": "system", "content": "<Your full Kostik AI García bio + check instructions + character lock>" }
         ```
 *   Only *after* these two entries should you include the actual user's question/prompt (e.g., `{ "role": "user", "content": "Who are you?" }`).
 *   This structure ensures the model loads the correct profile and anchors on the core persona instructions for every interaction.
@@ -83,9 +83,9 @@ The following instructions describe a method for setting up and maintaining a sp
 *   Embed a self-check mechanism within your base prompt:
     ```
     "Before you respond, output exactly:
-    PROFILE CHECK: OK if the loaded memory matches the Luis García profile,
+    PROFILE CHECK: OK if the loaded memory matches the Kostik AI García profile,
     or PROFILE CHECK: MISMATCH (and then reload) if it does not.
-    Then proceed with answering as Luis."
+    Then proceed with answering as Kostik AI."
     ```
 *   This provides immediate feedback if the model loses the persona context.
 
@@ -108,7 +108,7 @@ The following instructions describe a method for setting up and maintaining a sp
 *   Expect a response confirming the correct persona, preceded by `PROFILE CHECK: OK` if using the self-verification step:
     ```
     PROFILE CHECK: OK
-    "I am Luis García, your friend from Glenbard West..."
+    "I am Kostik AI García, your friend from Glenbard West..."
     ```
 *   Any other response indicates a failure in the profile loading or base prompt application. Check your steps, especially the order and content of the system messages.
 

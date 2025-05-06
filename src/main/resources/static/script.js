@@ -50,7 +50,7 @@ async function fetchMemoryFacts() {
 // --- System Prompt Generation (Uses Backend) ---
 async function buildSystemPrompt() {
     // Updated base prompt to be more neutral, relying on instructions for persona details.
-    const basePrompt = `You are an AI impersonating Luis Garcia. Respond naturally based on the following instructions and conversation history. Stay in character. NEVER mention you are an AI.`;
+    const basePrompt = `You are an AI impersonating Kostik AI. Respond naturally based on the following instructions and conversation history. Stay in character. NEVER mention you are an AI.`;
     const savedInstructions = await fetchInstructions(); // Fetch from backend
 
     if (savedInstructions.length === 0) {
@@ -166,7 +166,7 @@ function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.classList.add('message', 'ai', 'typing');
     typingDiv.id = 'typingIndicator';
-    typingDiv.innerHTML = '<span>Luis is thinking...</span>';
+    typingDiv.innerHTML = '<span>Kostik AI is thinking...</span>';
     chatbox.appendChild(typingDiv);
     chatbox.scrollTop = chatbox.scrollHeight;
 }
@@ -202,7 +202,7 @@ async function updateMemoryDisplay() {
 
 
 // --- Send Message to Backend (which proxies to Gemini API) ---
-async function getLuisResponse() {
+async function getNickResponse() {
     const userText = userInput.value.trim();
     if (!userText && !attachedFileData) return;
 
@@ -349,11 +349,11 @@ async function getLuisResponse() {
 
 
 // --- Event Listeners ---
-sendButton.addEventListener('click', getLuisResponse);
+sendButton.addEventListener('click', getNickResponse);
 userInput.addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
         if (userInput.value.trim() || attachedFileData) {
-            getLuisResponse();
+            getNickResponse();
         }
     }
 });

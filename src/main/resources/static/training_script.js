@@ -806,7 +806,7 @@ if (exportFinetuneBtn) {
         alert('Export for Fine-tuning functionality not yet implemented.');
         // TODO: Implement JSONL export logic here later
         // 1. Fetch all instructions (already have fetchInstructions)
-        // 2. Format them into JSONL: {"prompt": "User: ...", "completion": "Luis: ..."}
+        // 2. Format them into JSONL: {"prompt": "User: ...", "completion": "Kostik AI: ..."}
         //    (Requires parsing instructionText to separate user/luis parts, or a different input format)
         // 3. Trigger download of the generated file.
     });
